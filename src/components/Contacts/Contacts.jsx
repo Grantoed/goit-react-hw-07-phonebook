@@ -14,7 +14,6 @@ import {
   FilterInput,
   DeleteBtn,
 } from './Contacts.styled';
-import { nanoid } from 'nanoid';
 
 export const Contacts = () => {
   const contacts = useSelector(selectVisibleContacts);
@@ -47,14 +46,11 @@ export const Contacts = () => {
       />
       {isLoading && <div>Loading...</div>}
       <ContactsList>
-        {contacts.map(contactItem => {
+        {contacts.map(({ name, phone, id }) => {
           return (
-            <ContactsItem key={nanoid(4)}>
-              {contactItem.name}: {contactItem.number}
-              <DeleteBtn
-                type="button"
-                onClick={() => deleteContact(contactItem.id)}
-              >
+            <ContactsItem key={id}>
+              {name}: {phone}
+              <DeleteBtn type="button" onClick={() => deleteContact(id)}>
                 Delete
               </DeleteBtn>
             </ContactsItem>
