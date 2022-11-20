@@ -2,7 +2,11 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { changeFilter } from 'redux/slices';
 import { fetch, remove } from 'redux/operations';
-import { selectContacts, selectFilter } from 'redux/selectors';
+import {
+  selectVisibleContacts,
+  selectIsLoading,
+  selectFilter,
+} from 'redux/selectors';
 import {
   ContactsList,
   ContactsItem,
@@ -13,8 +17,9 @@ import {
 import { nanoid } from 'nanoid';
 
 export const Contacts = () => {
-  const filterValue = useSelector(selectFilter);
-  const contactsArray = useSelector(selectContacts);
+  const contacts = useSelector(selectVisibleContacts);
+  const filter = useSelector(selectFilter);
+  const isLoading = useSelector(selectIsLoading);
 
   const dispatch = useDispatch();
 
@@ -30,15 +35,6 @@ export const Contacts = () => {
     dispatch(changeFilter(e.currentTarget.value));
   };
 
-  const handleFilter = () => {
-    const normalizedFilter = filterValue.toLowerCase().trim();
-    return contactsArray.filter(contact =>
-      contact.name.toLowerCase().includes(normalizedFilter)
-    );
-  };
-
-  const visibleContacts = handleFilter();
-
   return (
     <>
       <FilterLabel htmlFor="filter">Find contacts by name</FilterLabel>
@@ -46,11 +42,12 @@ export const Contacts = () => {
         type="text"
         id="filter"
         name="filter"
-        value={filterValue}
+        value={filter}
         onChange={handleChange}
       />
+      {isLoading && <div>Loading...</div>}
       <ContactsList>
-        {visibleContacts.map(contactItem => {
+        {contacts.map(contactItem => {
           return (
             <ContactsItem key={nanoid(4)}>
               {contactItem.name}: {contactItem.number}
