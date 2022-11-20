@@ -1,6 +1,8 @@
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { remove, changeFilter } from 'redux/slices';
-import { getContactsValue, getFilterValue } from 'redux/selectors';
+import { changeFilter } from 'redux/slices';
+import { fetch, remove } from 'redux/operations';
+import { selectContacts, selectFilter } from 'redux/selectors';
 import {
   ContactsList,
   ContactsItem,
@@ -11,10 +13,14 @@ import {
 import { nanoid } from 'nanoid';
 
 export const Contacts = () => {
-  const filterValue = useSelector(getFilterValue);
-  const contactsArray = useSelector(getContactsValue);
+  const filterValue = useSelector(selectFilter);
+  const contactsArray = useSelector(selectContacts);
 
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetch());
+  }, [dispatch]);
 
   const deleteContact = contactId => {
     dispatch(remove(contactId));
